@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YYB Go - 初始设置</title>
+  <style>
+    :root {
+      --bg: oklch(0.974 0.004 250);
+      --surface: oklch(1 0 0);
+      --ink: oklch(0.19 0.025 252);
+      --muted: oklch(0.43 0.025 252);
+      --faint: oklch(0.58 0.018 252);
+      --line: oklch(0.885 0.012 250);
+      --primary: oklch(0.54 0.205 3);
+      --primary-hover: oklch(0.48 0.195 3);
+      --accent: oklch(0.44 0.112 190);
+      --success: oklch(0.55 0.135 145);
+      --success-soft: oklch(0.94 0.035 145);
+      --danger: oklch(0.55 0.18 25);
+      --radius: 8px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: grid; place-items: center;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+    }
+    .card {
+      width: min(420px, calc(100vw - 32px));
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    .mark {
+      width: 44px; height: 44px;
+      border-radius: var(--radius);
+      display: grid; place-items: center;
+      background: var(--ink); color: var(--surface);
+      font-weight: 800; font-size: 20px;
+      margin: 0 auto 16px;
+    }
+    h1 { text-align: center; font-size: 20px; font-weight: 760; margin-bottom: 4px; }
+    .sub { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+    .alert {
+      padding: 10px 12px; border-radius: var(--radius);
+      background: oklch(0.955 0.04 78); border: 1px solid oklch(0.9 0.06 78);
+      color: oklch(0.45 0.12 78); font-size: 12px; margin-bottom: 18px;
+      display: flex; gap: 8px; align-items: flex-start;
+    }
+    .alert-icon { flex-shrink: 0; font-size: 16px; }
+    .field { display: grid; gap: 6px; margin-bottom: 16px; }
+    .field label { color: var(--muted); font-size: 12px; font-weight: 680; }
+    .field .hint { color: var(--faint); font-size: 11px; }
+    .input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--ink);
+      padding: 10px 11px;
+      font: inherit; outline: none;
+      transition: border-color 160ms ease;
+    }
+    .input:focus { border-color: var(--accent); }
+    .btn {
+      width: 100%; min-height: 40px;
+      border: none; border-radius: var(--radius);
+      background: var(--primary); color: #fff;
+      font: inherit; font-weight: 700; cursor: pointer;
+      transition: background 160ms ease;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn:disabled { opacity: 0.62; cursor: not-allowed; }
+    .btn:focus-visible { outline: 3px solid oklch(0.82 0.08 190); outline-offset: 2px; }
+    .error { min-height: 20px; text-align: center; color: var(--danger); font-size: 13px; margin-top: 12px; }
+    .success { min-height: 20px; text-align: center; color: var(--success); font-size: 13px; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="mark" aria-hidden="true">Y</div>
+    <h1>欢迎使用 YYB Go</h1>
+    <p class="sub">首次运行，请设置管理员密码</p>
+    <div class="alert">
+      <span class="alert-icon">⚠</span>
+      <span>这是首次运行初始化。设置密码后，每次访问控制台都需要登录验证。API Token 可选，用于外部接口调用。</span>
+    </div>
+    <form id="setupForm" autocomplete="off">
+      <div class="field">
+        <label for="passwordInput">管理员密码 *</label>
+        <input class="input" type="password" id="passwordInput" placeholder="至少 4 位" autofocus>
+        <span class="hint">登录 Web 控制台时需要此密码</span>
+      </div>
+      <div class="field">
+        <label for="tokenInput">API Token（可选）</label>
+        <input class="input" type="text" id="tokenInput" placeholder="留空则跳过，后续可在设置中配置">
+        <span class="hint">外部调用接口时使用 <code>Authorization: Bearer &lt;token&gt;</code></span>
+      </div>
+      <button class="btn" type="submit" id="submitBtn">完成设置</button>
+    </form>
+    <div class="error" id="errorMsg"></div>
+    <div class="success" id="successMsg"></div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+
+    function show(msg, cls, el) {
+      el.textContent = msg;
+    }
+
+    $("setupForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      $("errorMsg").textContent = "";
+      $("successMsg").textContent = "";
+
+      const password = $("passwordInput").value;
+      const token = $("tokenInput").value.trim();
+
+      if (!password || password.length < 4) {
+        $("errorMsg").textContent = "密码至少需要 4 位";
+        return;
+      }
+
+      const btn = $("submitBtn");
+      btn.disabled = true;
+      btn.textContent = "保存中…";
+
+      try {
+        const resp = await fetch("/setup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password, token })
+        });
+        const text = await resp.text();
+        let data = null;
+        try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+        const isEnv = data && typeof data === "object" && !Array.isArray(data)
+          && Object.prototype.hasOwnProperty.call(data, "code");
+        if (!resp.ok || (isEnv && data.code !== 0)) {
+          $("errorMsg").textContent = isEnv ? data.msg : ("HTTP " + resp.status);
+          btn.disabled = false;
+          btn.textContent = "完成设置";
+          return;
+        }
+        $("successMsg").textContent = "设置完成，正在跳转…";
+        const redirect = (isEnv && data.data && data.data.redirect) ? data.data.redirect : "/";
+        setTimeout(() => { location.href = redirect; }, 600);
+      } catch {
+        $("errorMsg").textContent = "网络错误，请重试";
+        btn.disabled = false;
+        btn.textContent = "完成设置";
+      }
+    });
+  </script>
+</body>
+</html>
