@@ -75,7 +75,10 @@
       try {
         const r = await api("POST", "/qr");
         sid = r.session_id;
-        $("qrWrap").innerHTML = `<img src="${r.image_url}?t=${Date.now()}" alt="二维码">`;
+        const image = document.createElement("img");
+        image.src = `${r.image_url}?t=${Date.now()}`;
+        image.alt = "二维码";
+        $("qrWrap").replaceChildren(image);
         setStatus("等待扫码…", "s-pending");
         startCountdown();
         pollTimer = setInterval(poll, 1500);
@@ -99,9 +102,17 @@
       try {
         const acc = await api("POST", `/qr/${sid}/confirm`);
         setStatus("✓ 添加成功", "s-ok");
-        const name = acc.nickname || acc.alias || acc.openid;
+        const name = acc.nickname || acc.alias || acc.openid || "账号已添加";
         $("accBox").style.display = "block";
-        $("accBox").innerHTML = `<div>账号：<b>${name}</b></div><div>openid：${acc.openid}</div><div>状态：${acc.status}</div>`;
+        const accountName = document.createElement("div");
+        const accountLabel = document.createElement("b");
+        accountLabel.textContent = name;
+        accountName.append("账号：", accountLabel);
+        const openid = document.createElement("div");
+        openid.textContent = `openid：${acc.openid || ""}`;
+        const status = document.createElement("div");
+        status.textContent = `状态：${acc.status || ""}`;
+        $("accBox").replaceChildren(accountName, openid, status);
         $("qrWrap").innerHTML = '<span style="color:#67c23a;font-size:48px">✓</span>';
       } catch (e) { setStatus("入库失败: " + JSON.stringify(e.data ?? e), "s-err"); }
     }
