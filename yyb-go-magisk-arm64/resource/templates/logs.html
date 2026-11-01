@@ -26,7 +26,7 @@
         </div>
         <section class="panel">
           <div class="panel-head log-toolbar"><div><h2>接口记录</h2><p id="logPageMeta">加载中</p></div><div class="log-controls"><label class="sr-only" for="logSearch">筛选请求日志</label><input class="input log-search" id="logSearch" type="search" placeholder="筛选路径、方法、账号或小程序"><label class="sr-only" for="logPageSize">每页记录数</label><select class="select log-page-size" id="logPageSize"><option value="25">25 条</option><option value="50" selected>50 条</option><option value="100">100 条</option></select></div></div>
-          <div class="table-wrap"><table class="account-table log-table"><thead><tr><th>路径</th><th>请求方法</th><th>接口状态</th><th>来源 IP</th><th>请求小程序</th><th>请求账号</th><th>请求时间 (UTC+8)</th><th>备注</th></tr></thead><tbody id="requestLogRows"></tbody></table></div>
+          <div class="table-wrap log-table-wrap"><table class="account-table log-table"><thead><tr><th>路径</th><th>请求方法</th><th>接口状态</th><th>来源 IP</th><th>请求小程序</th><th>请求账号</th><th>请求时间 (UTC+8)</th><th>备注</th></tr></thead><tbody id="requestLogRows"></tbody></table></div>
           <div class="log-cards" id="requestLogCards"></div>
           <div class="pagination"><button class="button secondary" id="previousLogsBtn"><span data-icon="arrow-left"></span>上一页</button><span id="logPageLabel">第 1 页</span><button class="button secondary" id="nextLogsBtn">下一页<span data-icon="arrow"></span></button></div>
         </section>
@@ -34,6 +34,11 @@
     </main>
   </div>
   <nav class="mobile-nav" id="mobileNav" aria-label="移动端主导航"></nav>
+  <dialog class="modal-dialog request-detail-dialog" id="requestDetailDialog" aria-labelledby="requestDetailTitle">
+    <div class="modal-head"><div><h2 id="requestDetailTitle">请求详情</h2></div><button class="icon-button" type="button" id="closeRequestDetailBtn" aria-label="关闭">×</button></div>
+    <div class="modal-body"><pre class="request-detail-content" id="requestDetailContent"></pre></div>
+    <div class="modal-actions"><button class="button secondary" type="button" id="dismissRequestDetailBtn">关闭</button></div>
+  </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="/static/js/console.js"></script>
 </body>
