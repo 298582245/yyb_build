@@ -1,3 +1,39 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f4f2ed"><title>调用调试 · YYB Go</title><link rel="stylesheet" href="/static/css/console.css"></head>
-<body data-page="debug"><div class="app-shell"><aside class="sidebar" aria-label="主导航"><div class="brand"><div class="brand-mark">Y</div><div><p class="brand-title">YYB Go</p><div class="brand-subtitle">小程序能力控制台</div></div></div><div class="nav-label">Workspace</div><nav class="nav-list" id="desktopNav"></nav><div class="sidebar-foot"><div class="service-state" id="sidebarHealth"><span class="state-dot"></span><span>服务检测中</span></div><div class="sidebar-version">YYB Go · control plane</div></div></aside><main class="main"><header class="mobile-topbar"><div class="mobile-brand"><div class="brand-mark">Y</div><strong>YYB Go</strong></div><div class="mobile-status" id="mobileHealth"><span class="state-dot"></span><span>在线</span></div></header><header class="desktop-topbar"><a class="top-link" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>接口文档</a><a class="button primary" href="/scan"><span data-icon="qr"></span>扫码添加账号</a></header><div class="content"><section class="view"><div class="view-head"><div><p class="eyebrow">Developer tools</p><h1>调用调试</h1><p>选择账号和能力，快速检查小程序接口返回。</p></div><a class="button secondary" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>查看文档</a></div><div class="debug-grid"><section class="panel"><div class="panel-head"><div><h2>请求配置</h2><p>请求不会写入请求日志（模块待接入）</p></div></div><div class="panel-body"><div class="call-form"><div class="field"><label for="debugAccount">调用账号</label><select class="select" id="debugAccount"></select></div><div class="field"><label for="featureSelect">能力</label><select class="select" id="featureSelect"><option value="getCode">getCode</option><option value="getPhoneNumber">getPhoneNumber</option><option value="operateWxData">operateWxData</option></select></div><div class="field"><label for="appIDInput">APPID</label><input class="input" id="appIDInput" value="wx141bfb9b73c970a9" autocomplete="off" spellcheck="false"></div><div class="field hidden" id="payloadField"><label for="payloadInput">请求 JSON</label><textarea class="textarea" id="payloadInput" spellcheck="false">{"api_name":"getUserInfo","data":{},"env":1}</textarea></div><div class="button-row"><button class="button primary" id="callBtn"><span data-icon="play"></span>执行调用</button><button class="button secondary" id="clearResultBtn"><span data-icon="trash"></span>清空结果</button></div></div></div></section><section class="panel"><div class="panel-head"><div><h2>返回结果</h2><p class="result-meta" id="resultMeta">等待调用</p></div><button class="icon-button" id="copyResultBtn" title="复制结果"><span data-icon="copy"></span><span class="sr-only">复制结果</span></button></div><div class="panel-body"><pre class="result-box" id="resultBox">选择账号并执行调用后，返回内容会显示在这里。</pre></div></section></div></section></div></main></div><nav class="mobile-nav" id="mobileNav" aria-label="移动端主导航"></nav><div class="toast" id="toast" role="status" aria-live="polite"></div><script src="/static/js/console.js"></script></body></html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f2ed">
+  <title>调用调试 · YYB Go</title>
+  <link rel="stylesheet" href="/static/css/console.css">
+</head>
+<body data-page="debug">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand"><div class="brand-mark">Y</div><div><p class="brand-title">YYB Go</p><div class="brand-subtitle">小程序能力控制台</div></div></div>
+      <div class="nav-label">Workspace</div><nav class="nav-list" id="desktopNav"></nav>
+      <div class="sidebar-foot"><div class="service-state" id="sidebarHealth"><span class="state-dot"></span><span>服务检测中</span></div><div class="sidebar-version">YYB Go · control plane</div></div>
+    </aside>
+    <main class="main">
+      <header class="mobile-topbar"><div class="mobile-brand"><div class="brand-mark">Y</div><strong>YYB Go</strong></div><div class="mobile-status" id="mobileHealth"><span class="state-dot"></span><span>在线</span></div></header>
+      <header class="desktop-topbar"><a class="top-link" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>接口文档</a><a class="button primary" href="/scan"><span data-icon="qr"></span>扫码添加账号</a></header>
+      <div class="content"><section class="view">
+        <div class="view-head"><div><p class="eyebrow">Developer tools</p><h1>调用调试</h1><p>选择账号和能力，快速检查小程序接口返回。</p></div><a class="button secondary" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>查看文档</a></div>
+        <div class="debug-grid">
+          <section class="panel"><div class="panel-head"><div><h2>请求配置</h2></div></div><div class="panel-body"><div class="call-form">
+            <div class="field"><label for="debugAccount">调用账号</label><select class="select" id="debugAccount"></select></div>
+            <div class="field"><label for="featureSelect">能力</label><select class="select" id="featureSelect"><option value="getCode">getCode</option><option value="getPhoneNumber">getPhoneNumber</option><option value="operateWxData">operateWxData</option></select></div>
+            <div class="field"><label for="appIDInput">APPID</label><input class="input" id="appIDInput" value="wx141bfb9b73c970a9" autocomplete="off" spellcheck="false"></div>
+            <div class="field hidden" id="payloadField"><label for="payloadInput">请求 JSON</label><textarea class="textarea" id="payloadInput" spellcheck="false">{"api_name":"getUserInfo","data":{},"env":1}</textarea></div>
+            <div class="button-row"><button class="button primary" id="callBtn"><span data-icon="play"></span>执行调用</button><button class="button secondary" id="clearResultBtn"><span data-icon="trash"></span>清空结果</button></div>
+          </div></div></section>
+          <section class="panel"><div class="panel-head"><div><h2>返回结果</h2><p class="result-meta" id="resultMeta">等待调用</p></div><button class="icon-button" id="copyResultBtn" title="复制结果"><span data-icon="copy"></span><span class="sr-only">复制结果</span></button></div><div class="panel-body"><pre class="result-box" id="resultBox">选择账号并执行调用后，返回内容会显示在这里。</pre></div></section>
+        </div>
+      </section></div>
+    </main>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="移动端主导航"></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/static/js/console.js"></script>
+</body>
+</html>

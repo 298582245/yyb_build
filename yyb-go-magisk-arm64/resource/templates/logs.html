@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>请求日志 · YYB Go</title>
+  <link rel="stylesheet" href="/static/css/console.css">
+</head>
+<body data-page="logs">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand"><div class="brand-mark">Y</div><div><p class="brand-title">YYB Go</p><div class="brand-subtitle">小程序能力控制台</div></div></div>
+      <div class="nav-label">Workspace</div><nav class="nav-list" id="desktopNav"></nav>
+      <div class="sidebar-foot"><div class="service-state" id="sidebarHealth"><span class="state-dot"></span><span>服务检测中</span></div><div class="sidebar-version">YYB Go · control plane</div></div>
+    </aside>
+    <main class="main">
+      <header class="mobile-topbar"><div class="mobile-brand"><div class="brand-mark">Y</div><strong>YYB Go</strong></div><div class="mobile-status" id="mobileHealth"><span class="state-dot"></span><span>在线</span></div></header>
+      <header class="desktop-topbar"><a class="top-link" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>接口文档</a><a class="button primary" href="/scan"><span data-icon="qr"></span>扫码添加账号</a></header>
+      <div class="content"><section class="view">
+        <div class="view-head"><div><p class="eyebrow">Observability</p><h1>请求日志</h1><p>查看接口状态、调用对象和失败响应。</p></div><div class="head-actions"><button class="button secondary" id="reloadLogsBtn"><span data-icon="refresh"></span>刷新日志</button></div></div>
+        <div class="metric-grid log-metrics">
+          <article class="metric"><div class="metric-label"><span data-icon="pulse"></span>今日请求</div><div class="metric-value" id="logTodayCount">0</div><div class="metric-note">东八区自然日</div></article>
+          <article class="metric"><div class="metric-label"><span data-icon="layers"></span>累计请求</div><div class="metric-value" id="logTotalCount">0</div><div class="metric-note">已记录的接口请求</div></article>
+          <article class="metric"><div class="metric-label"><span data-icon="trend"></span>当前结果</div><div class="metric-value" id="logVisibleCount">0</div><div class="metric-note">当前页匹配的记录</div></article>
+          <article class="metric"><div class="metric-label"><span data-icon="list"></span>映射名称</div><div class="metric-value" id="logMappingCount">0</div><div class="metric-note">按 APPID 自动显示</div></article>
+        </div>
+        <section class="panel">
+          <div class="panel-head log-toolbar"><div><h2>接口记录</h2><p id="logPageMeta">加载中</p></div><div class="log-controls"><label class="sr-only" for="logSearch">筛选请求日志</label><input class="input log-search" id="logSearch" type="search" placeholder="筛选路径、方法、账号或小程序"><label class="sr-only" for="logPageSize">每页记录数</label><select class="select log-page-size" id="logPageSize"><option value="25">25 条</option><option value="50" selected>50 条</option><option value="100">100 条</option></select></div></div>
+          <div class="table-wrap"><table class="account-table log-table"><thead><tr><th>路径</th><th>请求方法</th><th>接口状态</th><th>来源 IP</th><th>请求小程序</th><th>请求账号</th><th>请求时间 (UTC+8)</th><th>备注</th></tr></thead><tbody id="requestLogRows"></tbody></table></div>
+          <div class="log-cards" id="requestLogCards"></div>
+          <div class="pagination"><button class="button secondary" id="previousLogsBtn"><span data-icon="arrow-left"></span>上一页</button><span id="logPageLabel">第 1 页</span><button class="button secondary" id="nextLogsBtn">下一页<span data-icon="arrow"></span></button></div>
+        </section>
+      </section></div>
+    </main>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="移动端主导航"></nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/static/js/console.js"></script>
+</body>
+</html>
