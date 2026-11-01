@@ -1,0 +1,8 @@
+id=yyb-go
+name=YYB Go
+version=1.0.0
+versionCode=1
+author=YYB
+description=YYB Go Android arm64 service for Magisk
+minMagisk=21000
+skip_mount=true

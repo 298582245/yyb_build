@@ -1,5 +1,16 @@
-resource/db/
+**/resource/db/
 resource/qr/
 resource/avatars/
 .env
 *.zip
+
+# Database files and SQLite runtime companions anywhere in this repository
+*.db
+*.db-*
+*.db.*
+*.sqlite
+*.sqlite-*
+*.sqlite.*
+*.sqlite3
+*.sqlite3-*
+*.sqlite3.*

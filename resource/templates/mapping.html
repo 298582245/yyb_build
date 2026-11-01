@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>名称映射 · YYB Go</title>
+  <link rel="stylesheet" href="/static/css/console.css">
+</head>
+<body data-page="mapping">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航">
+      <div class="brand"><div class="brand-mark">Y</div><div><p class="brand-title">YYB Go</p><div class="brand-subtitle">小程序能力控制台</div></div></div>
+      <div class="nav-label">Workspace</div><nav class="nav-list" id="desktopNav"></nav>
+      <div class="sidebar-foot"><div class="service-state" id="sidebarHealth"><span class="state-dot"></span><span>服务检测中</span></div><div class="sidebar-version">YYB Go · control plane</div></div>
+    </aside>
+    <main class="main">
+      <header class="mobile-topbar"><div class="mobile-brand"><div class="brand-mark">Y</div><strong>YYB Go</strong></div><div class="mobile-status" id="mobileHealth"><span class="state-dot"></span><span>在线</span></div></header>
+      <header class="desktop-topbar"><a class="top-link" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>接口文档</a><button class="button primary" type="button" data-open-mapping-dialog><span data-icon="plus"></span>添加映射</button></header>
+      <div class="content"><section class="view">
+        <div class="view-head"><div><p class="eyebrow">Identity</p><h1>名称映射</h1><p>将小程序 APPID 映射为便于识别的名称。</p></div><div class="head-actions"><button class="button secondary" id="reloadMappingsBtn"><span data-icon="refresh"></span>刷新列表</button><button class="button primary" type="button" data-open-mapping-dialog><span data-icon="plus"></span>添加映射</button></div></div>
+        <section class="panel mapping-list-panel"><div class="panel-head"><div><h2>已保存映射</h2><p id="mappingCount">加载中</p></div><label class="sr-only" for="mappingSearch">筛选映射</label><input class="input mapping-search" id="mappingSearch" type="search" placeholder="筛选名称或 APPID"></div>
+          <div class="table-wrap"><table class="account-table"><thead><tr><th>小程序名称</th><th>APPID</th><th><span class="sr-only">操作</span></th></tr></thead><tbody id="mappingRows"></tbody></table></div><div class="mapping-cards" id="mappingCards"></div>
+        </section>
+      </section></div>
+    </main>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="移动端主导航"></nav>
+  <dialog class="modal-dialog" id="mappingDialog" aria-labelledby="mappingDialogTitle">
+    <form class="modal-form" id="mappingForm">
+      <div class="modal-head"><div><h2 id="mappingDialogTitle">添加名称映射</h2><p>每个 APPID 对应一个小程序名称</p></div><button class="icon-button" type="button" id="closeMappingDialogBtn" aria-label="关闭">×</button></div>
+      <div class="modal-body mapping-form"><div class="field"><label for="mappingAppID">APPID</label><input class="input" id="mappingAppID" name="app_id" maxlength="128" placeholder="例如 wx1234567890abcdef" autocomplete="off" required></div><div class="field"><label for="mappingName">小程序名称</label><input class="input" id="mappingName" name="name" maxlength="200" placeholder="输入小程序名称" autocomplete="off" required></div></div>
+      <div class="modal-actions"><button class="button secondary" type="button" id="cancelMappingDialogBtn">取消</button><button class="button primary" type="submit"><span data-icon="plus"></span>添加映射</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/static/js/console.js"></script>
+</body>
+</html>
