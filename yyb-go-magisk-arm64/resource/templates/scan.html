@@ -48,6 +48,9 @@
         && Object.prototype.hasOwnProperty.call(d, "code")
         && Object.prototype.hasOwnProperty.call(d, "msg")
         && Object.prototype.hasOwnProperty.call(d, "data");
+      if (r.status === 401 || (isEnvelope && Number(d.code) === 401)) {
+        if (!new Set(["/login", "/setup"]).has(window.location.pathname)) window.location.replace("/login");
+      }
       if (!r.ok || (isEnvelope && d.code !== 0)) {
         throw { status: r.status, code: isEnvelope ? d.code : r.status, data: isEnvelope ? d.data : d, message: isEnvelope ? d.msg : ("HTTP " + r.status), payload: d };
       }

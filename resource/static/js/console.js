@@ -55,6 +55,9 @@ async function api(method, url, body) {
   let data;
   try { data = text ? JSON.parse(text) : null; } catch { data = text; }
   const envelope = data && typeof data === "object" && !Array.isArray(data) && "code" in data && "msg" in data && "data" in data;
+  if (response.status === 401 || (envelope && Number(data.code) === 401)) {
+    if (!new Set(["/login", "/setup"]).has(window.location.pathname)) window.location.replace("/login");
+  }
   if (!response.ok || (envelope && data.code !== 0)) { const error = new Error(envelope ? data.msg : `HTTP ${response.status}`); error.status = response.status; error.data = envelope ? data.data : data; throw error; }
   return envelope ? data.data : data;
 }

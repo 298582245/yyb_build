@@ -51,7 +51,7 @@
     .log-table-wrap { overflow-x:hidden; }
     .log-table { width:100%; min-width:0; table-layout:fixed; }
     .log-table th,.log-table td { overflow:hidden; padding:10px 8px; text-overflow:ellipsis; white-space:nowrap; }
-    .log-table th:nth-child(1) { width:22%; } .log-table th:nth-child(2) { width:8%; } .log-table th:nth-child(3) { width:8%; } .log-table th:nth-child(4) { width:11%; } .log-table th:nth-child(5) { width:12%; } .log-table th:nth-child(6) { width:11%; } .log-table th:nth-child(7) { width:15%; } .log-table th:nth-child(8) { width:13%; }
+    .log-table th:nth-child(1) { width:22%; } .log-table th:nth-child(2) { width:8%; } .log-table th:nth-child(3) { width:8%; } .log-table th:nth-child(4) { width:11%; } .log-table th:nth-child(5) { width:170px; min-width:170px; } .log-table th:nth-child(6) { width:11%; } .log-table th:nth-child(7) { width:15%; } .log-table th:nth-child(8) { width:90px; min-width:90px; }
     .log-table td:first-child { min-width:0; color:var(--ink); font:12px ui-monospace,SFMono-Regular,Consolas,monospace; }
     .log-path-text { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .log-table td:nth-child(4) { color:var(--ink-soft); font:11px ui-monospace,SFMono-Regular,Consolas,monospace; }
