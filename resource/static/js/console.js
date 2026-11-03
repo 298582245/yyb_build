@@ -100,7 +100,54 @@ function renderLogs() {
   document.querySelectorAll("[data-view-log-note]").forEach(button => button.addEventListener("click", () => openRequestDetail("请求备注", button.dataset.viewLogNote)));
   document.querySelectorAll("[data-view-log-path]").forEach(button => button.addEventListener("click", () => openRequestDetail("请求路径", button.dataset.viewLogPath)));
 }
-function openRequestDetail(title, content) { $("requestDetailTitle").textContent = title; $("requestDetailContent").textContent = content; $("requestDetailDialog").showModal(); }
+function openRequestDetail(title, content) {
+  $("requestDetailTitle").textContent = title;
+  const root = $("requestDetailContent");
+  root.replaceChildren();
+  let detail;
+  if (title === "请求备注") {
+    try { detail = JSON.parse(content); } catch {}
+  }
+  if (detail?.request && detail?.response) {
+    appendRequestDetailSection(root, "请求", [
+      ["方法", detail.request.method], ["URL", detail.request.url],
+      ["请求头", detail.request.headers], ["请求体", detail.request.body],
+      ["请求体状态", detail.request.body_truncated ? "内容过长，已截断" : "完整"]
+    ]);
+    appendRequestDetailSection(root, "响应", [
+      ["状态码", detail.response.status], ["响应头", detail.response.headers],
+      ["响应体", detail.response.body], ["响应体状态", detail.response.body_truncated ? "内容过长，已截断" : "完整"]
+    ]);
+  } else {
+    const pre = document.createElement("pre");
+    pre.className = "request-detail-raw";
+    pre.textContent = content;
+    root.append(pre);
+  }
+  $("requestDetailDialog").showModal();
+}
+function appendRequestDetailSection(root, title, fields) {
+  const section = document.createElement("section");
+  section.className = "request-detail-section";
+  const heading = document.createElement("h3");
+  heading.textContent = title;
+  section.append(heading);
+  for (const [label, value] of fields) {
+    if (value === undefined || value === null || value === "") continue;
+    const row = document.createElement("div");
+    row.className = "request-detail-field";
+    const name = document.createElement("strong");
+    name.textContent = label;
+    const content = document.createElement("pre");
+    content.textContent = typeof value === "object" ? JSON.stringify(value, null, 2) : String(value);
+    if ((label === "请求体" || label === "响应体") && typeof value === "string") {
+      try { content.textContent = JSON.stringify(JSON.parse(value), null, 2); } catch {}
+    }
+    row.append(name, content);
+    section.append(row);
+  }
+  root.append(section);
+}
 async function loadMappings() { try { state.mappings = await api("GET", "/api/name-mappings"); renderMappingList(); renderLogs(); } catch (error) { showToast(`名称映射加载失败：${error.message}`, true); } }
 async function loadRequestLogs() { try { const result = await api("GET", `/api/request-logs?limit=${state.logLimit}&offset=${state.logOffset}`); state.logs = result.items || []; state.logTotal = result.total || 0; state.logToday = result.today || 0; renderLogs(); renderStats(); } catch (error) { showToast(`请求日志加载失败：${error.message}`, true); } }
 async function refreshLogs() { await Promise.all([loadRequestLogs(), loadMappings()]); }
