@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f2ed">
+  <title>掉线通知 · YYB Go</title>
+  <link rel="stylesheet" href="/static/css/console.css">
+  <style>
+    .notify-grid { display:grid; gap:14px; max-width:960px; }
+    .notify-channel { padding:18px; border:1px solid var(--line); border-radius:var(--radius); background:var(--paper); }
+    .notify-channel-head { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .notify-channel-head h2 { margin:0; font-size:16px; }
+    .notify-channel-head p { margin:4px 0 0; color:var(--ink-soft); font-size:12px; }
+    .notify-toggle { display:flex; align-items:center; gap:8px; flex:none; font-weight:700; }
+    .notify-toggle input { width:17px; height:17px; accent-color:var(--coral); }
+    .notify-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:13px; margin-top:18px; }
+    .notify-fields .wide { grid-column:1/-1; }
+    .notify-help { margin:0; color:var(--ink-faint); font-size:11px; }
+    .notify-actions { display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+    .notify-status { min-height:20px; color:var(--ink-soft); font-size:12px; }
+    .notify-status.error { color:var(--red); }
+    @media(max-width:640px){.notify-fields{grid-template-columns:minmax(0,1fr)}.notify-fields .wide{grid-column:auto}.notify-channel-head{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body data-page="notifications">
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="主导航"><div class="brand"><div class="brand-mark">Y</div><div><p class="brand-title">YYB Go</p><div class="brand-subtitle">小程序能力控制台</div></div></div><div class="nav-label">Workspace</div><nav class="nav-list" id="desktopNav"></nav><div class="sidebar-foot"><div class="service-state" id="sidebarHealth"><span class="state-dot"></span><span>服务检测中</span></div><div class="sidebar-version">YYB Go · control plane</div></div></aside>
+    <main class="main">
+      <header class="mobile-topbar"><div class="mobile-brand"><div class="brand-mark">Y</div><strong>YYB Go</strong></div><div class="mobile-status" id="mobileHealth"><span class="state-dot"></span><span>在线</span></div></header>
+      <header class="desktop-topbar"><a class="top-link" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>接口文档</a><a class="button primary" href="/scan"><span data-icon="qr"></span>扫码添加账号</a></header>
+      <div class="content"><section class="view">
+        <div class="view-head"><div><p class="eyebrow">Notifications</p><h1>掉线通知</h1><p>账号凭据失效、需要重新扫码时发送提醒。</p></div></div>
+        <form id="notificationForm" class="notify-grid">
+          <section class="notify-channel">
+            <div class="notify-channel-head"><div><h2>邮箱</h2><p>支持 SMTP STARTTLS。</p></div><label class="notify-toggle"><input id="emailEnabled" type="checkbox">启用邮箱通知</label></div>
+            <div class="notify-fields">
+              <div class="field"><label for="smtpHost">SMTP 服务器</label><input class="input" id="smtpHost" placeholder="smtp.example.com"></div>
+              <div class="field"><label for="smtpPort">SMTP 端口</label><input class="input" id="smtpPort" type="number" min="1" max="65535" value="587"></div>
+              <div class="field"><label for="smtpUsername">登录账号</label><input class="input" id="smtpUsername" autocomplete="username"></div>
+              <div class="field"><label for="smtpPassword">邮箱密码 / 授权码</label><input class="input" id="smtpPassword" type="password" autocomplete="new-password"><p class="notify-help" id="smtpPasswordState"></p></div>
+              <div class="field"><label for="emailFrom">发件人邮箱</label><input class="input" id="emailFrom" type="email" placeholder="notify@example.com"></div>
+              <div class="field"><label for="emailTo">收件人邮箱</label><input class="input" id="emailTo" placeholder="one@example.com, two@example.com"><p class="notify-help">多个地址用英文逗号分隔。</p></div>
+            </div>
+          </section>
+          <section class="notify-channel">
+            <div class="notify-channel-head"><div><h2>自定义推送</h2><p>向接口 POST JSON：{ "message": "标题\n内容" }。</p></div><label class="notify-toggle"><input id="customEnabled" type="checkbox">启用自定义推送</label></div>
+            <div class="notify-fields">
+              <div class="field wide"><label for="customUrl">推送 URL</label><input class="input" id="customUrl" type="url" placeholder="https://example.com/send"></div>
+              <div class="field"><label for="customToken">Access Token</label><input class="input" id="customToken" type="password" autocomplete="new-password"><p class="notify-help" id="customTokenState"></p></div>
+              <div class="field"><label for="customQuery">附加查询参数</label><input class="input" id="customQuery" placeholder="user_id=123 或 group_id=456"></div>
+            </div>
+          </section>
+          <section class="notify-channel"><div class="notify-actions"><button class="button primary" id="saveNotifications" type="submit">保存配置</button><button class="button secondary" id="testNotifications" type="button">立即发送测试通知</button><span class="notify-status" id="notificationStatus" role="status" aria-live="polite"></span></div></section>
+        </form>
+      </section></div>
+    </main>
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="移动端主导航"></nav><div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/static/js/console.js"></script>
+  <script>
+    const notification$ = id => document.getElementById(id);
+    async function notificationRequest(method, body) {
+      const response = await api(method, "/api/notifications", body);
+      return response;
+    }
+    function notificationFormData() { return {
+      email_enabled: notification$("emailEnabled").checked, smtp_host: notification$("smtpHost").value.trim(), smtp_port: Number(notification$("smtpPort").value),
+      smtp_username: notification$("smtpUsername").value.trim(), smtp_password: notification$("smtpPassword").value,
+      email_from: notification$("emailFrom").value.trim(), email_to: notification$("emailTo").value.trim(),
+      custom_enabled: notification$("customEnabled").checked, custom_url: notification$("customUrl").value.trim(),
+      custom_token: notification$("customToken").value, custom_query: notification$("customQuery").value.trim()
+    }; }
+    function notificationStatus(message, error = false) { const el = notification$("notificationStatus"); el.textContent = message; el.classList.toggle("error", error); }
+    async function loadNotificationConfig() {
+      const config = await notificationRequest("GET");
+      notification$("emailEnabled").checked = config.email_enabled; notification$("smtpHost").value = config.smtp_host || "";
+      notification$("smtpPort").value = config.smtp_port || 587; notification$("smtpUsername").value = config.smtp_username || "";
+      notification$("emailFrom").value = config.email_from || ""; notification$("emailTo").value = config.email_to || "";
+      notification$("customEnabled").checked = config.custom_enabled; notification$("customUrl").value = config.custom_url || "";
+      notification$("customQuery").value = config.custom_query || "";
+      notification$("smtpPasswordState").textContent = config.smtp_password_set ? "密码已保存，留空会继续使用。" : "尚未保存密码。";
+      notification$("customTokenState").textContent = config.custom_token_set ? "Token 已保存，留空会继续使用。" : "尚未保存 Token。";
+    }
+    async function saveNotificationConfig() {
+      await notificationRequest("PUT", notificationFormData());
+      notification$("smtpPassword").value = ""; notification$("customToken").value = "";
+      await loadNotificationConfig();
+    }
+    notification$("notificationForm").addEventListener("submit", async event => {
+      event.preventDefault(); notification$("saveNotifications").disabled = true; notificationStatus("正在保存…");
+      try { await saveNotificationConfig(); notificationStatus("通知配置已保存。"); }
+      catch (error) { notificationStatus(error.message, true); }
+      finally { notification$("saveNotifications").disabled = false; }
+    });
+    notification$("testNotifications").addEventListener("click", async () => {
+      const button = notification$("testNotifications"); button.disabled = true; notificationStatus("正在发送测试通知…");
+      try { await saveNotificationConfig(); await notificationRequest("POST", { action: "test" }); notificationStatus("测试通知发送成功。"); }
+      catch (error) { notificationStatus(error.message, true); }
+      finally { button.disabled = false; }
+    });
+    loadNotificationConfig().catch(error => notificationStatus(error.message, true));
+  </script>
+</body>
+</html>
