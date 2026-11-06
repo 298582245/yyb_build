@@ -15,29 +15,36 @@
       <header class="desktop-topbar"><a class="top-link" href="/docs/index.html" target="_blank" rel="noreferrer"><span data-icon="book"></span>接口文档</a><a class="button primary" href="/scan"><span data-icon="qr"></span>扫码添加账号</a></header>
       <div class="content"><section class="view">
         <div class="view-head"><div><p class="eyebrow">Notifications</p><h1>掉线通知</h1><p>账号凭据失效、需要重新扫码时发送提醒。</p></div></div>
-        <form id="notificationForm" class="settings-grid">
+        <div class="settings-grid">
           <section class="panel">
-            <div class="panel-head"><div><h2>邮箱</h2><p>支持 SMTP STARTTLS。</p></div><label class="setting-label"><input id="emailEnabled" type="checkbox"> 启用</label></div>
-            <div class="panel-body settings-grid">
-              <div class="field"><label for="smtpHost">SMTP 服务器</label><input class="input" id="smtpHost" placeholder="smtp.example.com"></div>
-              <div class="field"><label for="smtpPort">SMTP 端口</label><input class="input" id="smtpPort" type="number" min="1" max="65535" value="587"></div>
-              <div class="field"><label for="smtpUsername">登录账号</label><input class="input" id="smtpUsername" autocomplete="username"></div>
-              <div class="field"><label for="smtpPassword">邮箱密码 / 授权码</label><input class="input" id="smtpPassword" type="password" autocomplete="new-password"><p class="setting-help" id="smtpPasswordState"></p></div>
-              <div class="field"><label for="emailFrom">发件人邮箱</label><input class="input" id="emailFrom" type="email" placeholder="notify@example.com"></div>
-              <div class="field"><label for="emailTo">收件人邮箱</label><input class="input" id="emailTo" placeholder="one@example.com, two@example.com"><p class="setting-help">多个地址用英文逗号分隔。</p></div>
-            </div>
+            <div class="panel-head"><div><h2>邮箱</h2><p>465 通常选择 SSL/TLS，其他端口通常选择 STARTTLS。</p></div><label class="setting-label"><input id="emailEnabled" type="checkbox"> 启用</label></div>
+            <div class="panel-body"><form id="emailForm">
+              <div class="settings-grid">
+                <div class="field"><label for="smtpHost">SMTP 服务器</label><input class="input" id="smtpHost" placeholder="smtp.example.com"></div>
+                <div class="field"><label for="smtpPort">SMTP 端口</label><input class="input" id="smtpPort" type="number" min="1" max="65535" value="587"></div>
+                <div class="field"><label for="smtpEncryption">加密方式</label><select class="select" id="smtpEncryption"><option value="starttls">STARTTLS</option><option value="ssl">SSL/TLS</option></select></div>
+                <div class="field"><label for="smtpUsername">登录账号</label><input class="input" id="smtpUsername" autocomplete="username"></div>
+                <div class="field"><label for="smtpPassword">邮箱密码 / 授权码</label><input class="input" id="smtpPassword" type="password" autocomplete="new-password"><p class="setting-help" id="smtpPasswordState"></p></div>
+                <div class="field"><label for="emailFrom">发件人邮箱</label><input class="input" id="emailFrom" type="email" placeholder="notify@example.com"></div>
+                <div class="field"><label for="emailTo">收件人邮箱</label><input class="input" id="emailTo" placeholder="one@example.com, two@example.com"><p class="setting-help">多个地址用英文逗号分隔。</p></div>
+              </div>
+              <div class="button-row"><button class="button primary" id="saveEmail" type="submit">保存邮箱配置</button><button class="button secondary" id="testEmail" type="button">测试邮箱通知</button></div>
+              <p class="setting-help" id="emailStatus" role="status" aria-live="polite"></p>
+            </form></div>
           </section>
           <section class="panel">
             <div class="panel-head"><div><h2>自定义推送</h2><p>向接口 POST JSON：{ "message": "标题\n内容" }。</p></div><label class="setting-label"><input id="customEnabled" type="checkbox"> 启用</label></div>
-            <div class="panel-body settings-grid">
-              <div class="field"><label for="customUrl">推送 URL</label><input class="input" id="customUrl" type="url" placeholder="https://example.com/send"></div>
-              <div class="field"><label for="customToken">Access Token</label><input class="input" id="customToken" type="password" autocomplete="new-password"><p class="setting-help" id="customTokenState"></p></div>
-              <div class="field"><label for="customQuery">附加查询参数</label><input class="input" id="customQuery" placeholder="user_id=123 或 group_id=456"></div>
-            </div>
+            <div class="panel-body"><form id="customForm">
+              <div class="settings-grid">
+                <div class="field"><label for="customUrl">推送 URL</label><input class="input" id="customUrl" type="url" placeholder="https://example.com/send"></div>
+                <div class="field"><label for="customToken">Access Token</label><input class="input" id="customToken" type="password" autocomplete="new-password"><p class="setting-help" id="customTokenState"></p></div>
+                <div class="field"><label for="customQuery">附加查询参数</label><input class="input" id="customQuery" placeholder="user_id=123 或 group_id=456"></div>
+              </div>
+              <div class="button-row"><button class="button primary" id="saveCustom" type="submit">保存自定义配置</button><button class="button secondary" id="testCustom" type="button">测试自定义推送</button></div>
+              <p class="setting-help" id="customStatus" role="status" aria-live="polite"></p>
+            </form></div>
           </section>
-          <section class="panel"><div class="panel-body"><div class="button-row"><button class="button primary" id="saveNotifications" type="submit">保存配置</button></div><p class="setting-help" id="saveStatus" role="status" aria-live="polite"></p></div></section>
-          <section class="panel"><div class="panel-body"><div class="button-row"><button class="button secondary" id="testNotifications" type="button">立即发送测试通知</button></div><p class="setting-help" id="testStatus" role="status" aria-live="polite"></p></div></section>
-        </form>
+        </div>
       </section></div>
     </main>
   </div>
@@ -49,42 +56,53 @@
       const response = await api(method, "/api/notifications", body);
       return response;
     }
-    function notificationFormData() { return {
-      email_enabled: notification$("emailEnabled").checked, smtp_host: notification$("smtpHost").value.trim(), smtp_port: Number(notification$("smtpPort").value),
-      smtp_username: notification$("smtpUsername").value.trim(), smtp_password: notification$("smtpPassword").value,
-      email_from: notification$("emailFrom").value.trim(), email_to: notification$("emailTo").value.trim(),
-      custom_enabled: notification$("customEnabled").checked, custom_url: notification$("customUrl").value.trim(),
-      custom_token: notification$("customToken").value, custom_query: notification$("customQuery").value.trim()
-    }; }
     function notificationStatus(id, message, error = false) { const el = notification$(id); el.textContent = message; el.classList.toggle("error", error); }
     async function loadNotificationConfig() {
       const config = await notificationRequest("GET");
       notification$("emailEnabled").checked = config.email_enabled; notification$("smtpHost").value = config.smtp_host || "";
-      notification$("smtpPort").value = config.smtp_port || 587; notification$("smtpUsername").value = config.smtp_username || "";
+      notification$("smtpPort").value = config.smtp_port || 587; notification$("smtpEncryption").value = config.smtp_encryption || ((config.smtp_port || 587) === 465 ? "ssl" : "starttls"); notification$("smtpUsername").value = config.smtp_username || "";
       notification$("emailFrom").value = config.email_from || ""; notification$("emailTo").value = config.email_to || "";
       notification$("customEnabled").checked = config.custom_enabled; notification$("customUrl").value = config.custom_url || "";
       notification$("customQuery").value = config.custom_query || "";
       notification$("smtpPasswordState").textContent = config.smtp_password_set ? "密码已保存，留空会继续使用。" : "尚未保存密码。";
       notification$("customTokenState").textContent = config.custom_token_set ? "Token 已保存，留空会继续使用。" : "尚未保存 Token。";
     }
-    async function saveNotificationConfig() {
-      await notificationRequest("PUT", notificationFormData());
-      notification$("smtpPassword").value = ""; notification$("customToken").value = "";
-      await loadNotificationConfig();
+    async function saveNotificationConfig(channel) {
+      const body = channel === "email" ? {
+        channel, email_enabled: notification$("emailEnabled").checked, smtp_host: notification$("smtpHost").value.trim(),
+        smtp_port: Number(notification$("smtpPort").value), smtp_encryption: notification$("smtpEncryption").value,
+        smtp_username: notification$("smtpUsername").value.trim(), smtp_password: notification$("smtpPassword").value,
+        email_from: notification$("emailFrom").value.trim(), email_to: notification$("emailTo").value.trim()
+      } : {
+        channel, custom_enabled: notification$("customEnabled").checked, custom_url: notification$("customUrl").value.trim(),
+        custom_token: notification$("customToken").value, custom_query: notification$("customQuery").value.trim()
+      };
+      const config = await notificationRequest("PUT", body);
+      if (channel === "email") {
+        notification$("smtpPassword").value = "";
+        notification$("smtpPasswordState").textContent = config.smtp_password_set ? "密码已保存，留空会继续使用。" : "尚未保存密码。";
+      } else {
+        notification$("customToken").value = "";
+        notification$("customTokenState").textContent = config.custom_token_set ? "Token 已保存，留空会继续使用。" : "尚未保存 Token。";
+      }
     }
-    notification$("notificationForm").addEventListener("submit", async event => {
-      event.preventDefault(); notification$("saveNotifications").disabled = true; notificationStatus("saveStatus", "正在保存…");
-      try { await saveNotificationConfig(); notificationStatus("saveStatus", "通知配置已保存。"); }
-      catch (error) { notificationStatus("saveStatus", error.message, true); }
-      finally { notification$("saveNotifications").disabled = false; }
-    });
-    notification$("testNotifications").addEventListener("click", async () => {
-      const button = notification$("testNotifications"); button.disabled = true; notificationStatus("testStatus", "正在发送测试通知…");
-      try { await notificationRequest("POST", { action: "test" }); notificationStatus("testStatus", "测试通知发送成功。"); }
-      catch (error) { notificationStatus("testStatus", error.message, true); }
-      finally { button.disabled = false; }
-    });
-    loadNotificationConfig().catch(error => notificationStatus("saveStatus", error.message, true));
+    function connectChannelForm(channel, formID, saveID, testID, statusID) {
+      notification$(formID).addEventListener("submit", async event => {
+        event.preventDefault(); notification$(saveID).disabled = true; notificationStatus(statusID, "正在保存…");
+        try { await saveNotificationConfig(channel); notificationStatus(statusID, "配置已保存。"); }
+        catch (error) { notificationStatus(statusID, error.message, true); }
+        finally { notification$(saveID).disabled = false; }
+      });
+      notification$(testID).addEventListener("click", async () => {
+        const button = notification$(testID); button.disabled = true; notificationStatus(statusID, "正在发送测试通知…");
+        try { await notificationRequest("POST", { action: "test", channel }); notificationStatus(statusID, "测试通知发送成功。"); }
+        catch (error) { notificationStatus(statusID, error.message, true); }
+        finally { button.disabled = false; }
+      });
+    }
+    connectChannelForm("email", "emailForm", "saveEmail", "testEmail", "emailStatus");
+    connectChannelForm("custom", "customForm", "saveCustom", "testCustom", "customStatus");
+    loadNotificationConfig().catch(error => notificationStatus("emailStatus", error.message, true));
   </script>
 </body>
 </html>
